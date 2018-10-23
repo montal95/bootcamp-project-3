@@ -1,0 +1,13 @@
+a{
+    color: white;
+}
+
+a:hover{
+    color: black;
+    background-color: white;
+}
+
+.navbar-brand:hover{
+    color: white;
+    background-color: #343a40!important;    
+}
