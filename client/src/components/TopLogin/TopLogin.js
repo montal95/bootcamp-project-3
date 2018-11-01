@@ -7,6 +7,7 @@ const TopLogin = () => {
     <div className="container">
         <span id="timeSpan">Time</span>
         <a className="float-right" id="loginLink" href="#">Login</a>
+        <a className="float-right" id="signUpLink" href="#">Sign Up</a>
     </div>
   </div>
   );
