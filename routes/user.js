@@ -1,22 +1,70 @@
 const express = require("express");
 const router = express.Router();
 
-// const router = require("express").Router();
-
-router.get("/api/user", function(req,res) {
-    res.send("Get users");
+//route used to get a specific users info
+router.get("/api/users/:id", function(req, res) {
+  db.User.findOne(req.body.id, function(err, response) {
+    if (err) {
+      return res.json(err);
+    }
+    return res.json(response);
+  });
 });
 
-router.post("/api/user", function(req,res) {
-    res.send("Post users");
+//route used to create a user
+router.post("/api/user", function(req, res) {
+  db.User.create(req.body, function(err, response) {
+    if (err) {
+      return res.json(err);
+    }
+    return res.json(response);
+  });
 });
 
-router.put("/api/user/:id", function(req,res) {
-    res.send("Update users");
+//route used to login
+router.post("/login", function(req, res) {
+  db.User.findOne({ username: req.body.username }, function(err, response) {
+    if (err) {
+      return res.json(err);
+    }
+    response.comparePassword(req.body.password, function(error, user) {
+      if (error) {
+        return res.json(error);
+      }
+      res.json(user);
+    });
+  });
 });
 
-router.delete("/api/user/:id", function(req,res) {
-    res.send("Delete users");
+//used to post a plan and assign its _id to the user
+router.post("/api/user/:id", function(req, res) {
+  db.Plan.create(req.body).then(function(dbPlan) {
+    // console.log(dbNote);
+    return db.User.findOneAndUpdate(
+      {
+        "_id": req.params.id
+      },
+      { $push: { plan: dbPlan._id } },
+      { new: true }
+    )
+      .then(function(dbNote) {
+        res.json(dbNote);
+      })
+      .catch(function(err) {
+        res.json(err);
+      });
+  });
+});
+
+//route used to delete user
+router.delete("/api/user", function(req, res) {
+  db.Article.remove({ _id: req.params.id }, function(err, response) {
+    if (err) {
+      console.log(err);
+    } else {
+      res.json(response);
+    }
+  });
 });
 
 module.exports = router;
