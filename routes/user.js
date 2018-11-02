@@ -2,10 +2,17 @@ const express = require("express");
 const router = express.Router();
 const db = require("../models");
 
-router.get("/api/user", function(req, res) {
-  res.send("Get Users");
+//route used to get a specific users info
+router.get("/api/users/:id", function(req, res) {
+  db.User.findOne(req.body.id, function(err, response) {
+    if (err) {
+      return res.json(err);
+    }
+    return res.json(response);
+  });
 });
 
+//route used to create a user
 router.post("/api/user", function(req, res) {
   db.User.create(req.body, function(err, response) {
     if (err) {
@@ -15,11 +22,8 @@ router.post("/api/user", function(req, res) {
   });
 });
 
+//route used to login
 router.post("/login", function(req, res) {
-  //echo route - testing to setup login - should send back original entry
-  // console.log(req.body);
-  // res.json(req.body);
-
   db.User.findOne({ username: req.body.username }, function(err, response) {
     if (err) {
       return res.json(err);
@@ -33,12 +37,35 @@ router.post("/login", function(req, res) {
   });
 });
 
-router.put("/api/user", function(req, res) {
-  res.send("Update Users");
+//used to post a plan and assign its _id to the user
+router.post("/api/user/:id", function(req, res) {
+  db.Plan.create(req.body).then(function(dbPlan) {
+    // console.log(dbNote);
+    return db.User.findOneAndUpdate(
+      {
+        "_id": req.params.id
+      },
+      { $push: { plan: dbPlan._id } },
+      { new: true }
+    )
+      .then(function(dbNote) {
+        res.json(dbNote);
+      })
+      .catch(function(err) {
+        res.json(err);
+      });
+  });
 });
 
-router.delete("/api/user/:id", function(req, res) {
-  res.send("Delete Users");
+//route used to delete user
+router.delete("/api/user", function(req, res) {
+  db.Article.remove({ _id: req.params.id }, function(err, response) {
+    if (err) {
+      console.log(err);
+    } else {
+      res.json(response);
+    }
+  });
 });
 
 module.exports = router;
