@@ -6,6 +6,7 @@ import TopLogin from "./components/TopLogin/TopLogin";
 import Moment from 'moment';
 import ReactModalLogin from 'react-modal-login';
 import { googleConfig } from "./social-config";
+import API from "./api/user"
 import './App.css';
 
 
@@ -16,6 +17,9 @@ class App extends Component {
 
         this.state = {
             dateFormatted: Moment().format('MMMM Do YYYY, h:mm:ss a').toString(),
+            username: "",
+            password: "",
+            email: "",
             showModal: false,
             loggedIn: null,
             loading: false,
@@ -46,18 +50,39 @@ class App extends Component {
     // React Modal Login related methods
     onLogin() {
         console.log('__onLogin__');
-        console.log('email: ' + document.querySelector('#email').value);
+        console.log('login: ' + document.querySelector('#login').value);
         console.log('password: ' + document.querySelector('#password').value);
 
-        const email = document.querySelector('#email').value;
+        const login = document.querySelector('#login').value;
         const password = document.querySelector('#password').value;
 
-        if (!email || !password) {
+        if (!login || !password) {
             this.setState({
                 error: true
             })
         } else {
-            this.onLoginSuccess('form');
+            const newUserData = { username: login, password: password };
+
+            console.log("onLogin - testing newUserData");
+            console.log(newUserData);
+            console.log("========\n");
+
+            console.log("sending user data to backend to verify log in");
+            API.login(newUserData).then((response) => {
+                console.log("Here's the response:");
+                console.log(response);
+
+                if (response.data) {
+                    console.log("Response Passed:  ");
+                    console.log(response);
+                    this.onLoginSuccess('form', response);
+
+                } else {
+                    console.log("Response failed:  ");
+                    console.log(response);
+                    this.onLoginFail('form', response);
+                }
+            });
         }
     }
 
@@ -76,7 +101,15 @@ class App extends Component {
                 error: true
             })
         } else {
-            this.onLoginSuccess('form');
+            const newUserData = { username: login, password: password, email: email };
+
+            console.log("testing newUserData");
+            console.log(newUserData);
+            console.log("========");
+            API.login(newUserData).then(function (response) {
+                console.log(response);
+                this.onLoginSuccess('form');
+            });
         }
     }
 
@@ -111,6 +144,8 @@ class App extends Component {
     }
 
     onLoginSuccess(method, response) {
+        console.log("onLoginSuccess function called");
+        console.log('logged successfully with ' + method);
 
         this.closeModal();
         this.setState({
@@ -120,7 +155,9 @@ class App extends Component {
     }
 
     onLoginFail(method, response) {
-
+        console.log('logging failed with ' + method);
+        console.log("testing response");
+        console.log(response);
         this.setState({
             loading: false,
             error: response
@@ -171,6 +208,8 @@ class App extends Component {
                 <Navbar />
                 <TopLogin
                     dateNow={date}
+                    loggedIn={this.state.loggedIn}
+                    username={this.state.username}
                     login={() => this.openModal('login')}
                     register={() => this.openModal('register')}
                 />
@@ -187,6 +226,7 @@ class App extends Component {
                     >
                         Learn React
                     </a>
+                    {isLoading}
                 </header>
                 <ReactModalLogin
                     visible={this.state.showModal}
@@ -198,7 +238,7 @@ class App extends Component {
                         afterChange: this.afterTabsChange.bind(this)
                     }}
                     loginError={{
-                        label: "Couldn't sign in, please try again."
+                        label: "Couldn't sign in, please make sure you typed in your username and password correctly."
                     }}
                     registerError={{
                         label: "Couldn't sign up, please try again."
@@ -230,12 +270,12 @@ class App extends Component {
                         loginInputs: [
                             {
                                 containerClass: 'RML-form-group',
-                                label: 'Email',
-                                type: 'email',
+                                label: 'Username',
+                                type: 'text',
                                 inputClass: 'RML-form-control',
-                                id: 'email',
-                                name: 'email',
-                                placeholder: 'Email',
+                                id: 'login',
+                                name: 'login',
+                                placeholder: 'Username',
                             },
                             {
                                 containerClass: 'RML-form-group',
@@ -296,8 +336,9 @@ class App extends Component {
                             config: googleConfig,
                             onLoginSuccess: this.onLoginSuccess.bind(this),
                             onLoginFail: this.onLoginFail.bind(this),
+                            inactive: isLoading,
                             label: "Continue with Google"
-                        }
+                          }
                     }}
                 />
                 {loggedIn}
