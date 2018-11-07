@@ -79,7 +79,7 @@ router.post("/api/user/:id", function(req, res) {
 });
 
 //route used to delete user
-router.delete("/api/user", function(req, res) {
+router.delete("/api/user/:id", function(req, res) {
   db.User.remove({ _id: req.params.id }, function(err, response) {
     if (err) {
       console.log(err);
@@ -87,6 +87,23 @@ router.delete("/api/user", function(req, res) {
       res.json(response);
     }
   });
+});
+
+//route used to delete plan from planDB
+router.delete("/api/plans/:id", function(req, res) {
+  db.Plan.remove(
+    {
+      _id: req.params.id
+    },
+    function(err, response) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(response);
+        res.json(response);
+      }
+    }
+  );
 });
 
 module.exports = router;
