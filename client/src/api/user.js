@@ -12,6 +12,12 @@ const API = {
   },
   newPlan: function(id) {
     return axios.post(`/api/user/${id}`);
+  },
+  deleteUser: function(id) {
+    return axios.delete(`/api/user/${id}`);
+  },
+  deletePlan: function(id) {
+    return axios.delete(`/api/user/${id}`);
   }
 };
 
