@@ -90,6 +90,23 @@ class App extends Component {
         }
     }
 
+    onLogOut() {
+        console.log('__onLogOut__');
+
+        this.setState({
+            username: "",
+            password: "",
+            email: "",
+            showModal: false,
+            loggedIn: null,
+            loading: false,
+            error: null,
+            initialTab: null,
+            recoverPasswordSuccess: null
+        })
+
+    }
+
     onRegister() {
         console.log('__onRegister__');
         console.log('login: ' + document.querySelector('#login').value);
@@ -220,6 +237,7 @@ class App extends Component {
                     loggedIn={this.state.loggedIn}
                     username={this.state.username}
                     login={() => this.openModal('login')}
+                    logoff={() => this.onLogOut()}
                     register={() => this.openModal('register')}
                 />
                 <header className="App-header">
