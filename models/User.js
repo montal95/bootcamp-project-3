@@ -13,6 +13,10 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
+  email: {
+    type: String,
+    required: true
+  },
   plan: [
     {
       type: Schema.Types.ObjectId,
@@ -33,6 +37,7 @@ userSchema.pre("save", function(next) {
 
     // hash the password using our new salt
     bcrypt.hash(user.password, salt, function(err, hash) {
+      console.log("testing user.password:  " + user.password);
       if (err) return next(err);
 
       // override the cleartext password with the hashed one
@@ -43,6 +48,7 @@ userSchema.pre("save", function(next) {
 });
 
 userSchema.methods.comparePassword = function(candidatePassword, cb) {
+  console.log("candidatePassword:  " + candidatePassword);
   bcrypt.compare(candidatePassword, this.password, function(err, isMatch) {
     if (err) return cb(err);
     cb(null, isMatch);

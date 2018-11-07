@@ -5,7 +5,7 @@ const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container">
-        <a class="navbar-brand" href="#">
+        <a className="navbar-brand" href="#">
           inHabit
         </a>
         <ul className="nav justify-content-end">

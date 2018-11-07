@@ -22,6 +22,10 @@ router.get("/api/plans/:id", function(req, res) {
 
 //route used to create a user
 router.post("/api/user", function(req, res) {
+  console.log("testing req.body");
+  console.log(req.body);
+  console.log("=========");
+
   db.User.create(req.body, function(err, response) {
     if (err) {
       return res.json(err);
@@ -32,14 +36,23 @@ router.post("/api/user", function(req, res) {
 
 //route used to login - return as a boolean
 router.post("/login", function(req, res) {
+  console.log("login route hit");
+  console.log("Line 32 of routes/user.js - testing req.body");
+  console.log(req.body);
+  console.log("=========");
+
   db.User.findOne({ username: req.body.username }, function(err, response) {
     if (err) {
+      console.log("error with login");
+      console.log(err);
       return res.json(err);
     }
     response.comparePassword(req.body.password, function(error, user) {
       if (error) {
+        console.log(error);
         return res.json(error);
       }
+      console.log(user);
       res.json(user);
     });
   });

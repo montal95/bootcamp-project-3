@@ -3,9 +3,10 @@
 }
 
 #loginRow{
+    color: white;
     background-color: black;
 }
 
-#loginLink{
+#loginLink, #signupLink, #logOutLink {
     padding: 0px 16px;
 }
