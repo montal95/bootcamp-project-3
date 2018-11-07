@@ -39,6 +39,8 @@ class App extends Component {
     }
 
     componentDidMount() {
+        console.log("testing state");
+        console.log(this.state);
         this.interval = setInterval(this.clockTick, 1000);
     }
 
@@ -170,7 +172,7 @@ class App extends Component {
     }
 
     onLoginSuccess(method, response) {
-        console.log("onLoginSuccess function called");
+        console.log("onLoginSuccess function calledd");
         console.log('logged successfully with ' + method);
 
         this.closeModal();
@@ -256,11 +258,9 @@ class App extends Component {
                     {isLoading}
                 </header>
                 <ReactModalLogin
-
-                    
                     visible={this.state.showModal}
                     onCloseModal={this.closeModal.bind(this)}
-                    loading={this.state.loading}
+                    loading={isLoading}
                     initialTab={this.state.initialTab}
                     error={this.state.error}
                     tabs={{
@@ -367,7 +367,7 @@ class App extends Component {
                             onLoginFail: this.onLoginFail.bind(this),
                             inactive: isLoading,
                             label: "Continue with Google"
-                          }
+                        }
                     }}
                 />
                 {loggedIn}
