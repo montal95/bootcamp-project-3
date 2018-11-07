@@ -8,6 +8,7 @@
     "moment": "^2.22.2",
     "react": "^16.6.0",
     "react-dom": "^16.6.0",
+    "react-google-login": "^3.2.1",
     "react-scripts": "2.0.5"
   },
   "scripts": {
