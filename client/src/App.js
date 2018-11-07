@@ -76,6 +76,10 @@ class App extends Component {
                     console.log("Response Passed:  ");
                     console.log(response);
                     this.onLoginSuccess('form', response);
+                    this.setState({
+                        username: login,
+                        password: password
+                    })
 
                 } else {
                     console.log("Response failed:  ");
@@ -106,9 +110,14 @@ class App extends Component {
             console.log("testing newUserData");
             console.log(newUserData);
             console.log("========");
-            API.login(newUserData).then(function (response) {
+            API.newUser(newUserData).then((response) => {
                 console.log(response);
                 this.onLoginSuccess('form');
+                this.setState({
+                    username: login,
+                    email: email,
+                    password: password
+                })
             });
         }
     }
@@ -229,6 +238,8 @@ class App extends Component {
                     {isLoading}
                 </header>
                 <ReactModalLogin
+
+                    
                     visible={this.state.showModal}
                     onCloseModal={this.closeModal.bind(this)}
                     loading={this.state.loading}
@@ -274,7 +285,7 @@ class App extends Component {
                                 type: 'text',
                                 inputClass: 'RML-form-control',
                                 id: 'login',
-                                name: 'login',
+                                name: 'username',
                                 placeholder: 'Username',
                             },
                             {
@@ -294,7 +305,7 @@ class App extends Component {
                                 type: 'text',
                                 inputClass: 'RML-form-control',
                                 id: 'login',
-                                name: 'login',
+                                name: 'username',
                                 placeholder: 'Username',
                             },
                             {

@@ -28,7 +28,8 @@ router.post("/api/user", function(req, res) {
 
 //route used to login
 router.post("/login", function(req, res) {
-  console.log("testing req.body");
+  console.log("login route hit");
+  console.log("Line 32 of routes/user.js - testing req.body");
   console.log(req.body);
   console.log("=========");
 
