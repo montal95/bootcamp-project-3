@@ -15,8 +15,9 @@ const userRoutes = require("./routes/user.js");
 app.use(userRoutes);
 
 mongoose.connect(
-  process.env.MONGODB_URI || "mongodb://localhost/inhabitMongo"
+  process.env.MONGODB_URI || "mongodb://localhost/inhabitMongo" ,  {useNewUrlParser: true}
 );
+mongoose.set('useCreateIndex', true);
 
 app.listen(PORT, function() {
   console.log("Connected on PORT: http://localhost:" + PORT);

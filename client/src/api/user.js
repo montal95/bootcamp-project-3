@@ -9,6 +9,9 @@ const API = {
 
     return axios.post("/login", newUser);
   },
+  getInfo: function(id) {
+    return axios.get(`/api/plans/${id}`);
+  },
   newUser: function(newUser) {
     console.log("newUser post route");
     console.log("testing newUser data received from front end");
