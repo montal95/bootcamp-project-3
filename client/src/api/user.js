@@ -22,6 +22,9 @@ const API = {
   },
   newPlan: function(id) {
     return axios.post(`/api/user/${id}`);
+  },
+  getCalendarInfo: function() {
+    return axios.get(`https://www.googleapis.com/calendar/v3/users/me/calendarList`);
   }
 };
 

@@ -109,6 +109,11 @@ class App extends Component {
             recoverPasswordSuccess: null
         })
 
+        if (this.state.loggedIn === 'google') {
+            // Signs out the Google user
+            window.gapi.auth2.getAuthInstance().signOut();
+        }
+
     }
 
     onRegister() {
@@ -198,6 +203,12 @@ class App extends Component {
             // console.log('Image URL: ' + profile.getImageUrl());
             // console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
 
+            // console.log("calling calendar related function - listUpcomingEvents()");
+            // this.listUpcomingEvents();
+
+            this.loadGoogleCalendarClient();
+            this.getCalendarInfo();
+
             this.closeModal();
             this.setState({
                 username: profile.getName(),
@@ -215,6 +226,22 @@ class App extends Component {
                 loading: false
             })
         }
+    }
+
+    loadGoogleCalendarClient() {
+        return window.gapi.client.load("https://content.googleapis.com/discovery/v1/apis/calendar/v3/rest")
+            .then(function () { console.log("GAPI client loaded for API"); },
+                function (err) { console.error("Error loading GAPI client for API", err); });
+    }
+
+    getCalendarInfo() {
+        console.log("getCalendarInfo function called");
+        return window.gapi.client.calendar.calendarList.list({})
+            .then(function (response) {
+                // Handle the results here (response.result has the parsed body).
+                console.log("Response", response);
+            },
+                function (err) { console.error("Execute error", err); });
     }
 
 
@@ -251,6 +278,42 @@ class App extends Component {
         this.setState({
             showModal: false,
             error: null
+        });
+    }
+
+
+    // Calendar related functions
+
+    appendPre(message) {
+        var pre = document.getElementById('content');
+        var textContent = document.createTextNode(message + '\n');
+        pre.appendChild(textContent);
+    }
+
+    listUpcomingEvents() {
+        window.gapi.client.calendar.events.list({
+            'calendarId': 'primary',
+            'timeMin': (new Date()).toISOString(),
+            'showDeleted': false,
+            'singleEvents': true,
+            'maxResults': 10,
+            'orderBy': 'startTime'
+        }).then(function (response) {
+            var events = response.result.items;
+            this.appendPre('Upcoming events:');
+
+            if (events.length > 0) {
+                for (let i = 0; i < events.length; i++) {
+                    var event = events[i];
+                    var when = event.start.dateTime;
+                    if (!when) {
+                        when = event.start.date;
+                    }
+                    this.appendPre(event.summary + ' (' + when + ')')
+                }
+            } else {
+                this.appendPre('No upcoming events found.');
+            }
         });
     }
 
@@ -292,6 +355,9 @@ class App extends Component {
                         Learn React
                     </a>
                     {loggedIn}
+                    <p>Google Calendar API Quickstart</p>
+                    <div id="content">
+                    </div>
                 </header>
                 <ReactModalLogin
                     visible={this.state.showModal}
