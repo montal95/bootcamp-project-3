@@ -20,6 +20,7 @@ class App extends Component {
             username: "",
             password: "",
             email: "",
+            profilePicURL: "",
             showModal: false,
             loggedIn: null,
             loading: false,
@@ -41,6 +42,7 @@ class App extends Component {
     componentDidMount() {
         console.log("testing state");
         console.log(this.state);
+        console.log("testing env var:  " + process.env.REACT_APP_GOOGLE_CLIENT_ID);
         this.interval = setInterval(this.clockTick, 1000);
     }
 
@@ -174,17 +176,51 @@ class App extends Component {
     onLoginSuccess(method, response) {
         console.log("onLoginSuccess function calledd");
         console.log('logged successfully with ' + method);
+        console.log("console logging out the response");
+        // console.log(JSON.stringify(response));
+        console.log(response);
 
-        this.closeModal();
-        this.setState({
-            loggedIn: method,
-            loading: false
-        })
+        if (method === 'google') {
+            console.log("sign in with google is a success, attempting to get basic profile data now");
+            const googleUser = window.gapi.auth2.getAuthInstance().currentUser.get();
+            const profile = googleUser.getBasicProfile();
+
+            console.log("testing googleUser var");
+            console.log(googleUser);
+            console.log("testing profile var");
+            console.log(profile);
+            console.log('ID: ' + profile.getId() + "\n"
+                + 'Name: ' + profile.getName() + "\n"
+                + 'Image URL: ' + profile.getImageUrl() + "\n"
+                + 'Email: ' + profile.getEmail());
+            // console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+            // console.log('Name: ' + profile.getName());
+            // console.log('Image URL: ' + profile.getImageUrl());
+            // console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+
+            this.closeModal();
+            this.setState({
+                username: profile.getName(),
+                email: profile.getEmail(),
+                profilePicURL: profile.getImageUrl(),
+                loggedIn: method,
+                loading: false
+
+            })
+        } else {
+
+            this.closeModal();
+            this.setState({
+                loggedIn: method,
+                loading: false
+            })
+        }
     }
+
 
     onLoginFail(method, response) {
         console.log('logging failed with ' + method);
-        console.log("testing response");
+        console.log("testing failed response");
         console.log(response);
         this.setState({
             loading: false,
@@ -255,12 +291,12 @@ class App extends Component {
                     >
                         Learn React
                     </a>
-                    {isLoading}
+                    {loggedIn}
                 </header>
                 <ReactModalLogin
                     visible={this.state.showModal}
                     onCloseModal={this.closeModal.bind(this)}
-                    loading={isLoading}
+                    loading={this.state.loading}
                     initialTab={this.state.initialTab}
                     error={this.state.error}
                     tabs={{
@@ -370,7 +406,6 @@ class App extends Component {
                         }
                     }}
                 />
-                {loggedIn}
                 <Footer />
             </div>
         );
