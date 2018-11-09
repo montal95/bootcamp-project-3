@@ -25,6 +25,13 @@ const API = {
   },
   getCalendarInfo: function() {
     return axios.get(`https://www.googleapis.com/calendar/v3/users/me/calendarList`);
+  },
+  verifyGoogleToken: function(userGoogleToken) {
+    console.log("post route for verifyGooglenToken");
+    console.log("testing userGoogleToken");
+    console.log(userGoogleToken);
+    
+    return axios.get(`/api/tokensignin/`, userGoogleToken);
   }
 };
 

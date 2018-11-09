@@ -9,11 +9,18 @@ const userSchema = new Schema({
     required: true,
     index: { unique: true }
   },
+  name: {
+    type: String,
+  },
   password: {
     type: String,
     required: true
   },
   email: {
+    type: String,
+    required: true
+  },
+  accountType: {
     type: String,
     required: true
   },

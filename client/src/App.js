@@ -131,7 +131,7 @@ class App extends Component {
                 error: true
             })
         } else {
-            const newUserData = { username: login, password: password, email: email };
+            const newUserData = { username: login, password: password, email: email, accountType: 'form' };
 
             console.log("testing newUserData");
             console.log(newUserData);
@@ -206,8 +206,10 @@ class App extends Component {
             // console.log("calling calendar related function - listUpcomingEvents()");
             // this.listUpcomingEvents();
 
-            this.loadGoogleCalendarClient();
-            this.getCalendarInfo();
+            // this.loadGoogleCalendarClient();
+            // this.getCalendarInfo();
+
+            this.onSignIn(googleUser);
 
             this.closeModal();
             this.setState({
@@ -226,6 +228,21 @@ class App extends Component {
                 loading: false
             })
         }
+    }
+
+    onSignIn(googleUser) {
+        console.log("Beginning process of authenticating Google user via token id");
+        const id_token = googleUser.getAuthResponse().id_token;
+
+        console.log("testing id_token var:  " + id_token);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/api/tokensignin');
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.onload = function () {
+            console.log('Signed in as: ' + xhr.responseText);
+        };
+        xhr.send('idtoken=' + id_token);
     }
 
     loadGoogleCalendarClient() {
