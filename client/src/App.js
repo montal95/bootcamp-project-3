@@ -18,6 +18,8 @@ class App extends Component {
         this.state = {
             dateFormatted: Moment().format('MMMM Do YYYY, h:mm:ss a').toString(),
             username: "",
+            firstName: "",
+            lastName: "",
             password: "",
             email: "",
             profilePicURL: "",
@@ -42,7 +44,9 @@ class App extends Component {
     componentDidMount() {
         console.log("testing state");
         console.log(this.state);
-        console.log("testing env var:  " + process.env.REACT_APP_GOOGLE_CLIENT_ID);
+        console.log("we are in:  " + process.env.NODE_ENV + " mode");
+        console.log("testing process.env:  ");
+        console.log(process.env);
         this.interval = setInterval(this.clockTick, 1000);
     }
 
@@ -99,14 +103,17 @@ class App extends Component {
 
         this.setState({
             username: "",
+            firstName: "",
+            lastName: "",
             password: "",
             email: "",
+            profilePicURL: "",
             showModal: false,
             loggedIn: null,
             loading: false,
             error: null,
             initialTab: null,
-            recoverPasswordSuccess: null
+            recoverPasswordSuccess: null,
         })
 
         if (this.state.loggedIn === 'google') {
@@ -119,10 +126,14 @@ class App extends Component {
     onRegister() {
         console.log('__onRegister__');
         console.log('login: ' + document.querySelector('#login').value);
+        console.log('first name: ' + document.querySelector('#firstName').value);
+        console.log('last name: ' + document.querySelector('#lastName').value);
         console.log('email: ' + document.querySelector('#email').value);
         console.log('password: ' + document.querySelector('#password').value);
 
         const login = document.querySelector('#login').value;
+        const firstName = document.querySelector('#firstName').value;
+        const lastName = document.querySelector('#lastName').value;
         const email = document.querySelector('#email').value;
         const password = document.querySelector('#password').value;
 
@@ -131,16 +142,27 @@ class App extends Component {
                 error: true
             })
         } else {
-            const newUserData = { username: login, password: password, email: email, accountType: 'form' };
+            const newUserData = {
+                firstname: firstName,
+                lastname: lastName,
+                email: email,
+                local: {
+                    username: login,
+                    password: password
+                }
+            };
 
             console.log("testing newUserData");
             console.log(newUserData);
-            console.log("========");
+            console.log("====================");
+
             API.newUser(newUserData).then((response) => {
                 console.log(response);
                 this.onLoginSuccess('form');
                 this.setState({
                     username: login,
+                    firstName: firstName,
+                    lastName: lastName,
                     email: email,
                     password: password
                 })
@@ -179,7 +201,7 @@ class App extends Component {
     }
 
     onLoginSuccess(method, response) {
-        console.log("onLoginSuccess function calledd");
+        console.log("onLoginSuccess function called");
         console.log('logged successfully with ' + method);
         console.log("console logging out the response");
         // console.log(JSON.stringify(response));
@@ -245,10 +267,39 @@ class App extends Component {
         xhr.send('idtoken=' + id_token);
     }
 
+    // getEvents() {
+    //     let that = this;
+    //     function start() {
+    //         gapi.client.init({
+    //             'apiKey': GOOGLE_API_KEY
+    //         }).then(function () {
+    //             return gapi.client.request({
+    //                 'path': `https://www.googleapis.com/calendar/v3/calendars/${CALENDAR_ID}/events`,
+    //             })
+    //         }).then((response) => {
+    //             let events = response.result.items
+    //             that.setState({
+    //                 events
+    //             }, () => {
+    //                 console.log(that.state.events);
+    //             })
+    //         }, function (reason) {
+    //             console.log(reason);
+    //         });
+    //     }
+    //     gapi.load('client', start)
+    // }
+
     loadGoogleCalendarClient() {
         return window.gapi.client.load("https://content.googleapis.com/discovery/v1/apis/calendar/v3/rest")
-            .then(function () { console.log("GAPI client loaded for API"); },
-                function (err) { console.error("Error loading GAPI client for API", err); });
+            .then(
+                function () {
+                    console.log("GAPI client loaded for API");
+                },
+                function (err) {
+                    console.error("Error loading GAPI client for API", err);
+                }
+            );
     }
 
     getCalendarInfo() {
@@ -444,6 +495,24 @@ class App extends Component {
                                 id: 'login',
                                 name: 'username',
                                 placeholder: 'Username',
+                            },
+                            {
+                                containerClass: 'RML-form-group',
+                                label: 'Firstname',
+                                type: 'text',
+                                inputClass: 'RML-form-control',
+                                id: 'firstName',
+                                name: 'firstname',
+                                placeholder: 'First Name',
+                            },
+                            {
+                                containerClass: 'RML-form-group',
+                                label: 'Lastname',
+                                type: 'text',
+                                inputClass: 'RML-form-control',
+                                id: 'lastName',
+                                name: 'lastname',
+                                placeholder: 'Last Name',
                             },
                             {
                                 containerClass: 'RML-form-group',

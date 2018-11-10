@@ -23,3 +23,5 @@ mongoose.set('useCreateIndex', true);
 app.listen(PORT, function() {
   console.log("Connected on PORT: http://localhost:" + PORT);
 });
+
+console.log(process.env.REACT_APP_GOOGLE_CLIENT_ID);
