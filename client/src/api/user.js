@@ -36,6 +36,12 @@ const API = {
   getGoogleClientID: function () {
     console.log("route to retrieve googleclientid from backend's .env");
     return axios.get(`/api/googleclientid/`);
+  },
+  deleteUser: function(id) {
+    return axios.delete(`/api/user/${id}`);
+  },
+  deletePlan: function(id) {
+    return axios.delete(`/api/user/${id}`);
   }
 };
 

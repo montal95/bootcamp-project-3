@@ -140,8 +140,8 @@ router.post("/api/user/:id", function (req, res) {
 });
 
 //route used to delete user
-router.delete("/api/user", function (req, res) {
-  db.User.remove({ _id: req.params.id }, function (err, response) {
+router.delete("/api/user/:id", function(req, res) {
+  db.User.remove({ _id: req.params.id }, function(err, response) {
     if (err) {
       console.log(err);
     } else {
@@ -266,5 +266,22 @@ router.get("/api/googleclientid", function (req, res) {
   return res.json(process.env.REACT_APP_GOOGLE_CLIENT_ID);
  });
 
+
+//route used to delete plan from planDB
+router.delete("/api/plans/:id", function(req, res) {
+  db.Plan.remove(
+    {
+      _id: req.params.id
+    },
+    function(err, response) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(response);
+        res.json(response);
+      }
+    }
+  );
+});
 
 module.exports = router;

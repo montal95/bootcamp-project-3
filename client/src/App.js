@@ -6,7 +6,7 @@ import TopLogin from "./components/TopLogin/TopLogin";
 import Moment from 'moment';
 import ReactModalLogin from 'react-modal-login';
 import { googleConfig } from "./social-config";
-import Calendar from "./components/Calendar/Calendar"
+import Calendar from "./components/Calendar/Calendar";
 import API from "./api/user"
 import './App.css';
 
