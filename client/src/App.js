@@ -3,6 +3,8 @@ import logo from './logo.svg';
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 import TopLogin from "./components/TopLogin/TopLogin";
+import CardContainer from "./components/CardContainer";
+import PlanCard from "./components/PlanCard";
 import Moment from 'moment';
 import ReactModalLogin from 'react-modal-login';
 import { googleConfig } from "./social-config";
@@ -17,6 +19,7 @@ class App extends Component {
 
         this.state = {
             dateFormatted: Moment().format('MMMM Do YYYY, h:mm:ss a').toString(),
+            userId: "",
             username: "",
             password: "",
             email: "",
@@ -26,6 +29,8 @@ class App extends Component {
             error: null,
             initialTab: null,
             recoverPasswordSuccess: null,
+            plans:[],
+            plansLoaded:false
         };
 
         this.clockTick = this.clockTick.bind(this);
@@ -34,8 +39,11 @@ class App extends Component {
     // Clock/Date related methods
     clockTick = () => {
         this.setState({
-            dateFormatted: Moment().format('dddd Do MMMM YYYY HH:mm:ss').toString()
+            dateFormatted: Moment().format('dddd Do MMMM YYYY h:mm A').toString()
         })
+        if(this.state.plansLoaded){
+            this.handlePlans();
+        }
     }
 
     componentDidMount() {
@@ -80,6 +88,10 @@ class App extends Component {
                         username: login,
                         password: password
                     })
+                    console.log(`State after login success function: \n ${JSON.stringify(this.state)}`);
+                    console.log(`State before we get plans: ${JSON.stringify(this.state)}`);
+                    this.getPlans(this.state.username);
+                    console.log(this.state);
 
                 } else {
                     console.log("Response failed:  ");
@@ -94,6 +106,7 @@ class App extends Component {
         console.log('__onLogOut__');
 
         this.setState({
+            userId:"",
             username: "",
             password: "",
             email: "",
@@ -102,7 +115,9 @@ class App extends Component {
             loading: false,
             error: null,
             initialTab: null,
-            recoverPasswordSuccess: null
+            recoverPasswordSuccess: null,
+            plans:[],
+            plansLoaded:false
         })
 
     }
@@ -140,7 +155,7 @@ class App extends Component {
     }
 
     onRecoverPassword() {
-        console.log('__onFotgottenPassword__');
+        console.log('__onForgottenPassword__');
         console.log('email: ' + document.querySelector('#email').value);
 
         const email = document.querySelector('#email').value;
@@ -216,6 +231,48 @@ class App extends Component {
         });
     }
 
+    getPlans(username) {
+        console.log(`${username} for get plans api`);
+        API.getInfo(username).then((response)=>{
+            console.log(response);
+            this.setState({
+                "userId":response.data.id,
+                "plans":response.data.plan
+            }, ()=>{
+                console.log(this.state);
+                console.log("=================");
+                console.log("All User info retrieved");
+                this.handlePlans();
+            });
+        })
+    }
+
+    handlePlans(){
+        let userPlans = (this.state.plans).sort((a,b)=>a.startTime > b.startTime ? 1 : -1);
+        console.log("This is sorted plan");
+        console.log(userPlans);
+        userPlans.forEach(plan => {
+            let minutes = ((Moment().diff(plan.startTime, 'minutes'))*-1) % 60;
+            let seconds = ((Moment().diff(plan.startTime, 'seconds'))*-1) % 60;
+            let hours = ((Moment().diff(plan.startTime, 'hours'))*-1)%24;
+            let days = ((Moment().diff(plan.startTime, 'hours')));
+            if(days > 0){
+                return plan.timeUntil = false;
+            }
+            plan.timeUntil=`${hours > 0 ? `${hours< 10 ? `0${hours}`: hours}:` : ""}${minutes}:${seconds<10 ? "0":""}${seconds}`;
+        });
+        userPlans.forEach(plan => plan.startTime = Moment(plan.startTime).format('h:mm A, M/D/YY').toString());
+        console.log("Time until added");
+        console.log(userPlans);
+        this.setState({
+            "plans":userPlans,
+            "plansLoaded":true
+        }, ()=>{
+            console.log("Plans Handled");
+            console.log(this.state.plans);
+        })
+    }
+
     render() {
         const date = this.state.dateFormatted;
 
@@ -229,6 +286,26 @@ class App extends Component {
 
         const isLoading = this.state.loading;
 
+        const plansLoaded = this.state.plansLoaded
+            ? <div>
+                <CardContainer>
+                    {this.state.plans.map(plan => (
+                        <PlanCard 
+                            id={plan._id}
+                            description={plan.description}
+                            timeUntil={plan.timeUntil}
+                            startTime = {plan.startTime}
+                            key={plan._id}
+                            location={plan.location}
+                        />
+                    ))}
+                </CardContainer>
+            </div>
+            : <div>
+                <p>Please log in</p>
+            </div>;
+
+
         return (
             <div className="App">
                 <Navbar />
@@ -240,21 +317,6 @@ class App extends Component {
                     logoff={() => this.onLogOut()}
                     register={() => this.openModal('register')}
                 />
-                <header className="App-header">
-                    <img src={logo} className="App-logo" alt="logo" />
-                    <p>
-                        Edit <code>src/App.js</code> and save to reload.
-                    </p>
-                    <a
-                        className="App-link"
-                        href="https://reactjs.org"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        Learn React
-                    </a>
-                    {isLoading}
-                </header>
                 <ReactModalLogin
 
                     
@@ -371,6 +433,7 @@ class App extends Component {
                     }}
                 />
                 {loggedIn}
+                {plansLoaded}
                 <Footer />
             </div>
         );

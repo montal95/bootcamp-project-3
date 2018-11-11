@@ -10,6 +10,10 @@ const API = {
     return axios.post("/login", newUser);
   },
   getInfo: function(id) {
+    console.log("get user info route");
+    console.log("Getting info for logged in user: ");
+    console.log(id);
+    console.log("=========================");
     return axios.get(`/api/plans/${id}`);
   },
   newUser: function(newUser) {

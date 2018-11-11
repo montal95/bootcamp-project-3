@@ -5,10 +5,14 @@ const db = require("../models");
 //route used to retrieve user information with necessary fields only
 router.get("/api/plans/:id", function(req, res) {
   db.User.findOne({
-    _id: req.params.id
+    username: req.params.id
   })
     .populate("plan")
     .then(function(response) {
+      console.log("testing req.params.id for GET");
+      console.log(req.params.id);
+      console.log("Response: ");
+      console.log(response);
       res.json({
         username: response.username,
         id: response._id,
