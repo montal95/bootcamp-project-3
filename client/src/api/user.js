@@ -32,6 +32,10 @@ const API = {
     console.log(userGoogleToken);
     
     return axios.get(`/api/tokensignin/`, userGoogleToken);
+  },
+  getGoogleClientID: function () {
+    console.log("route to retrieve googleclientid from backend's .env");
+    return axios.get(`/api/googleclientid/`);
   }
 };
 

@@ -114,7 +114,7 @@ router.post("/login", function (req, res) {
         return res.json(error);
       }
       console.log(user);
-      res.json(user);
+      return res.json(user);
     });
   });
 });
@@ -227,7 +227,7 @@ router.post("/api/tokensignin", function (req, res) {
                 id: userid,
                 token: token
               }
-            }).save();
+            }).save().then(function (err, response) { return json(response) });
 
             // const googleUser = {
             //   email: email,
@@ -261,6 +261,10 @@ router.post("/api/tokensignin", function (req, res) {
 
   }
 });
+
+router.get("/api/googleclientid", function (req, res) { 
+  return res.json(process.env.REACT_APP_GOOGLE_CLIENT_ID);
+ });
 
 
 module.exports = router;

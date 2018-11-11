@@ -6,6 +6,7 @@ import TopLogin from "./components/TopLogin/TopLogin";
 import Moment from 'moment';
 import ReactModalLogin from 'react-modal-login';
 import { googleConfig } from "./social-config";
+import Calendar from "./components/Calendar/Calendar"
 import API from "./api/user"
 import './App.css';
 
@@ -47,6 +48,19 @@ class App extends Component {
         console.log("we are in:  " + process.env.NODE_ENV + " mode");
         console.log("testing process.env:  ");
         console.log(process.env);
+
+        console.log('\ntesting googleConfig');
+        console.log(googleConfig);
+
+        // let googleClientID;
+        // API.getGoogleClientID().then(function(response) { 
+        //     console.log("\nresponse");
+        //     console.log(response);
+        //     console.log(response.data);
+        //     googleClientID = response.data;
+
+        // console.log(googleClientID);
+        // });
         this.interval = setInterval(this.clockTick, 1000);
     }
 
@@ -288,29 +302,29 @@ class App extends Component {
     //         });
     //     }
     //     gapi.load('client', start)
+    // // }
+
+    // loadGoogleCalendarClient() {
+    //     return window.gapi.client.load("https://content.googleapis.com/discovery/v1/apis/calendar/v3/rest")
+    //         .then(
+    //             function () {
+    //                 console.log("GAPI client loaded for API");
+    //             },
+    //             function (err) {
+    //                 console.error("Error loading GAPI client for API", err);
+    //             }
+    //         );
     // }
 
-    loadGoogleCalendarClient() {
-        return window.gapi.client.load("https://content.googleapis.com/discovery/v1/apis/calendar/v3/rest")
-            .then(
-                function () {
-                    console.log("GAPI client loaded for API");
-                },
-                function (err) {
-                    console.error("Error loading GAPI client for API", err);
-                }
-            );
-    }
-
-    getCalendarInfo() {
-        console.log("getCalendarInfo function called");
-        return window.gapi.client.calendar.calendarList.list({})
-            .then(function (response) {
-                // Handle the results here (response.result has the parsed body).
-                console.log("Response", response);
-            },
-                function (err) { console.error("Execute error", err); });
-    }
+    // getCalendarInfo() {
+    //     console.log("getCalendarInfo function called");
+    //     return window.gapi.client.calendar.calendarList.list({})
+    //         .then(function (response) {
+    //             // Handle the results here (response.result has the parsed body).
+    //             console.log("Response", response);
+    //         },
+    //             function (err) { console.error("Execute error", err); });
+    // }
 
 
     onLoginFail(method, response) {
@@ -352,38 +366,38 @@ class App extends Component {
 
     // Calendar related functions
 
-    appendPre(message) {
-        var pre = document.getElementById('content');
-        var textContent = document.createTextNode(message + '\n');
-        pre.appendChild(textContent);
-    }
+    // appendPre(message) {
+    //     var pre = document.getElementById('content');
+    //     var textContent = document.createTextNode(message + '\n');
+    //     pre.appendChild(textContent);
+    // }
 
-    listUpcomingEvents() {
-        window.gapi.client.calendar.events.list({
-            'calendarId': 'primary',
-            'timeMin': (new Date()).toISOString(),
-            'showDeleted': false,
-            'singleEvents': true,
-            'maxResults': 10,
-            'orderBy': 'startTime'
-        }).then(function (response) {
-            var events = response.result.items;
-            this.appendPre('Upcoming events:');
+    // listUpcomingEvents() {
+    //     window.gapi.client.calendar.events.list({
+    //         'calendarId': 'primary',
+    //         'timeMin': (new Date()).toISOString(),
+    //         'showDeleted': false,
+    //         'singleEvents': true,
+    //         'maxResults': 10,
+    //         'orderBy': 'startTime'
+    //     }).then(function (response) {
+    //         var events = response.result.items;
+    //         this.appendPre('Upcoming events:');
 
-            if (events.length > 0) {
-                for (let i = 0; i < events.length; i++) {
-                    var event = events[i];
-                    var when = event.start.dateTime;
-                    if (!when) {
-                        when = event.start.date;
-                    }
-                    this.appendPre(event.summary + ' (' + when + ')')
-                }
-            } else {
-                this.appendPre('No upcoming events found.');
-            }
-        });
-    }
+    //         if (events.length > 0) {
+    //             for (let i = 0; i < events.length; i++) {
+    //                 var event = events[i];
+    //                 var when = event.start.dateTime;
+    //                 if (!when) {
+    //                     when = event.start.date;
+    //                 }
+    //                 this.appendPre(event.summary + ' (' + when + ')')
+    //             }
+    //         } else {
+    //             this.appendPre('No upcoming events found.');
+    //         }
+    //     });
+    // }
 
     render() {
         const date = this.state.dateFormatted;
@@ -409,7 +423,7 @@ class App extends Component {
                     logoff={() => this.onLogOut()}
                     register={() => this.openModal('register')}
                 />
-                <header className="App-header">
+                {/* <header className="App-header">
                     <img src={logo} className="App-logo" alt="logo" />
                     <p>
                         Edit <code>src/App.js</code> and save to reload.
@@ -426,7 +440,8 @@ class App extends Component {
                     <p>Google Calendar API Quickstart</p>
                     <div id="content">
                     </div>
-                </header>
+                </header> */}
+                <Calendar />
                 <ReactModalLogin
                     visible={this.state.showModal}
                     onCloseModal={this.closeModal.bind(this)}
