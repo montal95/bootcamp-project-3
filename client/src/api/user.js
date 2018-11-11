@@ -27,6 +27,20 @@ const API = {
   newPlan: function(id) {
     return axios.post(`/api/user/${id}`);
   },
+  getCalendarInfo: function() {
+    return axios.get(`https://www.googleapis.com/calendar/v3/users/me/calendarList`);
+  },
+  verifyGoogleToken: function(userGoogleToken) {
+    console.log("post route for verifyGooglenToken");
+    console.log("testing userGoogleToken");
+    console.log(userGoogleToken);
+    
+    return axios.get(`/api/tokensignin/`, userGoogleToken);
+  },
+  getGoogleClientID: function () {
+    console.log("route to retrieve googleclientid from backend's .env");
+    return axios.get(`/api/googleclientid/`);
+  },
   deleteUser: function(id) {
     return axios.delete(`/api/user/${id}`);
   },
