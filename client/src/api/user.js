@@ -10,6 +10,10 @@ const API = {
     return axios.post("/login", newUser);
   },
   getInfo: function(id) {
+    console.log("get user info route");
+    console.log("Getting info for logged in user: ");
+    console.log(id);
+    console.log("=========================");
     return axios.get(`/api/plans/${id}`);
   },
   newUser: function(newUser) {
@@ -20,8 +24,8 @@ const API = {
     
     return axios.post("/api/user", newUser);
   },
-  newPlan: function(id) {
-    return axios.post(`/api/user/${id}`);
+  newPlan: function(id, newPlan) {
+    return axios.post(`/api/user/${id}`, newPlan);
   },
   getCalendarInfo: function() {
     return axios.get(`https://www.googleapis.com/calendar/v3/users/me/calendarList`);

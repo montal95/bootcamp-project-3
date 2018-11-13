@@ -8,9 +8,9 @@ const PlanSchema = new Schema({
   // `location` is of type String
   location: { type: String, required: true },
   // `startTime` is of type Date
-  startTime: {type:Date, required:true, default:Date.now()},
+  startTime: {type:Date, required:true, default:Date.now(), unique:true},
   // `endTime` is of type Date
-  endTime: {type:Date}
+  endTime: {type:Date, required:true}
 });
 
 // This creates our model from the above schema, using mongoose's model method
