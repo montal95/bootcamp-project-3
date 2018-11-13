@@ -2,6 +2,12 @@ import React from "react";
 import "./PlanCard.css";
 
 const PlanCard = props => {
+
+    const progStyle = {
+        width: props.progressPerc,
+        backgroundColor: props.progressRoute
+    }
+
   return (
     <div
       className="card bg-dark text-white mb-3"
@@ -11,9 +17,14 @@ const PlanCard = props => {
     >
       <div className="card-header text-left">
         <h4>
-          {props.description}{" "}
-          <span className="float-right">{`${props.timeUntil} / ${props.startTime}`}</span>
+          {props.description}
+          <span className="float-right">{`${props.timeUntil} / ${
+            props.displayTime
+          }`}</span>
         </h4>
+      </div>
+      <div className="progress-container">
+        <div className="progress" style={progStyle}/>
       </div>
       <div className="card-body text-left" id={props._id}>
         <ul>
@@ -21,7 +32,15 @@ const PlanCard = props => {
             <p className="card-text">Description: {props.description}</p>
           </li>
           <li>
-            <p className=" card-text">Location: {props.location}</p>
+            <p className="card-text">Location: {props.location}</p>
+          </li>
+          <li>
+            <p className="card-text">Plan ends: {props.endTime}</p>
+          </li>
+          <li>
+            <p>
+              Interval Picked: {props.progressRoute}, {props.progressPerc}{" "}
+            </p>
           </li>
           <li>
             <button

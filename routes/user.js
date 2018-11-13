@@ -7,15 +7,12 @@ const client = new OAuth2Client(process.env.REACT_APP_GOOGLE_CLIENT_ID);
 //route used to retrieve user information with necessary fields only
 router.get("/api/plans/:id", function (req, res) {
   db.User.findOne({
-    username: req.params.id
+    'local.username': req.params.id
   })
     .populate("plan")
     .then(function (response) {
-      res.json({
-        username: response.username,
-        id: response._id,
-        plan: response.plan
-      });
+      console.log(response);
+      res.json(response);
     })
     .catch(function (err) {
       res.json(err);
@@ -123,6 +120,7 @@ router.post("/login", function (req, res) {
 router.post("/api/user/:id", function (req, res) {
   db.Plan.create(req.body).then(function (dbPlan) {
     // console.log(dbNote);
+    console.log(req.body);
     return db.User.findOneAndUpdate(
       {
         _id: req.params.id

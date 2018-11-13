@@ -24,8 +24,8 @@ const API = {
     
     return axios.post("/api/user", newUser);
   },
-  newPlan: function(id) {
-    return axios.post(`/api/user/${id}`);
+  newPlan: function(id, newPlan) {
+    return axios.post(`/api/user/${id}`, newPlan);
   },
   getCalendarInfo: function() {
     return axios.get(`https://www.googleapis.com/calendar/v3/users/me/calendarList`);
