@@ -25,7 +25,7 @@ class PlanForm extends Component {
 
   handleSubmit(event){
     let form = document.getElementById("planForm");
-    let userId = event.target.id;
+    let userId = this.props.id;
     let description = this.state.description;
     let location = this.state.location;
     let startTime = this.state.startTime;
@@ -36,12 +36,19 @@ class PlanForm extends Component {
         'startTime' : `${startTime}`,
         'endTime' : `${endTime}`
     }
+
+    let sendPlan = {
+      'description':`${description}`,
+      'location' : `${location}`,
+      'startTime' : `${startTime}`,
+      'endTime' : `${endTime}`
+  }
     console.log(`User id: ${userId}`)
     console.log(`Plan info:`);
     console.log("================");
     console.log(newPlan);
     console.log("Making API post");
-    API.newPlan(userId, newPlan);
+    API.newPlan(userId, sendPlan);
     this.props.newPlanSubmit(newPlan);
     form.reset();
   }

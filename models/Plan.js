@@ -8,7 +8,7 @@ const PlanSchema = new Schema({
   // `location` is of type String
   location: { type: String, required: true },
   // `startTime` is of type Date
-  startTime: {type:Date, required:true, default:Date.now(), unique:true},
+  startTime: {type:Date, required:true},
   // `endTime` is of type Date
   endTime: {type:Date, required:true}
 });

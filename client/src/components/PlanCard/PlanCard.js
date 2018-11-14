@@ -38,11 +38,6 @@ const PlanCard = props => {
             <p className="card-text">Plan ends: {props.endTime}</p>
           </li>
           <li>
-            <p>
-              Interval Picked: {props.progressRoute}, {props.progressPerc}{" "}
-            </p>
-          </li>
-          <li>
             <button
               className="btn btn-danger btn-block btn-sm mr-3 mb-1 mt-2"
               type="button"

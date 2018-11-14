@@ -10,3 +10,8 @@
 #loginLink, #signupLink, #logOutLink {
     padding: 0px 16px;
 }
+
+.row{
+    margin-left: 0px;
+    margin-right: 0px;
+}

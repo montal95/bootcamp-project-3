@@ -402,7 +402,7 @@ class App extends Component {
     API.getInfo(username).then(response => {
       //inserts user info into state
       this.setState({
-        userId: response.data.id,
+        userId: response.data._id,
         plans: response.data.plan,
         email: response.data.email,
         firstName: response.data.firstname,
@@ -528,7 +528,7 @@ class App extends Component {
   //plan used to update the state from the submit in the form
   newPlanSubmit(plan) {
     console.log(this.state);
-    console.log(`new plan from submit: ${plan}`);
+    console.log(`new plan from submit: ${JSON.stringify(plan)}`);
     //pushes the plan from the form into the array in the state
     this.state.plans.push(plan);
     //re-runs handle plan
