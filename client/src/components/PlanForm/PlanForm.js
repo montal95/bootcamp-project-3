@@ -66,22 +66,22 @@ class PlanForm extends Component {
           >
             <h2 className="float-left">Make Plans</h2>
             <span className="float-right">
-              <i class="fas fa-plus" />
+              <i className="fas fa-plus" />
             </span>
           </div>
-          <div class="card collapse card-body" id="collapseForm">
+          <div className="card collapse card-body" id="collapseForm">
             <form id="planForm">
               <div className="input-group mb-2">
                 <input
                   type="text"
-                  class="form-control"
+                  className="form-control"
                   id="description"
                   placeholder="Description"
                   onChange={this.handleChange}
                 />
                 <input
                   type="text"
-                  class="form-control"
+                  className="form-control"
                   id="location"
                   placeholder="Location"
                   onChange={this.handleChange}
@@ -90,20 +90,20 @@ class PlanForm extends Component {
               <div className="input-group mb-2">
                 <input
                   type="datetime-local"
-                  class="form-control"
+                  className="form-control"
                   id="startTime"
                   placeholder=""
                   onChange={this.handleChange}
                 />
                 <input
                   type="datetime-local"
-                  class="form-control"
+                  className="form-control"
                   id="endTime"
                   placeholder="End Time"
                   onChange={this.handleChange}
                 />
               </div>
-              <button class="btn btn-outline-primary noteSubmit" type="button" onClick={this.handleSubmit} data-id={this.props.id} id={this.props.id}>Submit</button>
+              <button className="btn btn-outline-primary noteSubmit" type="button" onClick={this.handleSubmit} data-id={this.props.id} id={this.props.id}>Submit</button>
 
             </form>
           </div>

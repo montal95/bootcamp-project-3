@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = {
-  login: function(newUser) {
+  login: function (newUser) {
     console.log("login post route");
     console.log("testing newUser data received from front end");
     console.log(newUser);
@@ -9,42 +9,45 @@ const API = {
 
     return axios.post("/login", newUser);
   },
-  getInfo: function(id) {
+  getInfo: function (id) {
     console.log("get user info route");
     console.log("Getting info for logged in user: ");
     console.log(id);
     console.log("=========================");
     return axios.get(`/api/plans/${id}`);
   },
-  newUser: function(newUser) {
+  newUser: function (newUser) {
     console.log("newUser post route");
     console.log("testing newUser data received from front end");
     console.log(newUser);
     console.log("===============================");
-    
+
     return axios.post("/api/user", newUser);
   },
-  newPlan: function(id, newPlan) {
+  newPlan: function (id, newPlan) {
     return axios.post(`/api/user/${id}`, newPlan);
   },
-  getCalendarInfo: function() {
-    return axios.get(`https://www.googleapis.com/calendar/v3/users/me/calendarList`);
+  getCalendarInfo: function (googleAccessToken) {
+    console.log("getCalendarinfo backend route");
+    console.log("testing googleAccess Token");
+    console.log(googleAccessToken);
+    return axios.get(`https://www.googleapis.com/calendar/v3/users/me/calendarList`, { headers: { 'Authorization': 'Bearer ' + googleAccessToken } });
   },
-  verifyGoogleToken: function(userGoogleToken) {
-    console.log("post route for verifyGooglenToken");
+  verifyGoogleToken: function (userGoogleToken) {
+    console.log("\npost route for verifyGooglenToken");
     console.log("testing userGoogleToken");
     console.log(userGoogleToken);
-    
+
     return axios.get(`/api/tokensignin/`, userGoogleToken);
   },
   getGoogleClientID: function () {
     console.log("route to retrieve googleclientid from backend's .env");
     return axios.get(`/api/googleclientid/`);
   },
-  deleteUser: function(id) {
+  deleteUser: function (id) {
     return axios.delete(`/api/user/${id}`);
   },
-  deletePlan: function(id) {
+  deletePlan: function (id) {
     return axios.delete(`/api/user/${id}`);
   }
 };

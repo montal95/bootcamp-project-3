@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import logo from "./logo.svg";
 import Navbar from "./components/Navbar/Navbar";
 import Footer from "./components/Footer/Footer";
 import TopLogin from "./components/TopLogin/TopLogin";
@@ -65,15 +64,6 @@ class App extends Component {
     console.log("\ntesting googleConfig");
     console.log(googleConfig);
 
-    // let googleClientID;
-    // API.getGoogleClientID().then(function(response) {
-    //     console.log("\nresponse");
-    //     console.log(response);
-    //     console.log(response.data);
-    //     googleClientID = response.data;
-
-    // console.log(googleClientID);
-    // });
     this.interval = setInterval(this.clockTick, 1000);
   }
 
@@ -245,6 +235,8 @@ class App extends Component {
     console.log("console logging out the response");
     // console.log(JSON.stringify(response));
     console.log(response);
+    console.log("testing access_token");
+    console.log(response.access_token);
 
     if (method === "google") {
       console.log(
@@ -259,16 +251,16 @@ class App extends Component {
       console.log(profile);
       console.log(
         "ID: " +
-          profile.getId() +
-          "\n" +
-          "Name: " +
-          profile.getName() +
-          "\n" +
-          "Image URL: " +
-          profile.getImageUrl() +
-          "\n" +
-          "Email: " +
-          profile.getEmail()
+        profile.getId() +
+        "\n" +
+        "Name: " +
+        profile.getName() +
+        "\n" +
+        "Image URL: " +
+        profile.getImageUrl() +
+        "\n" +
+        "Email: " +
+        profile.getEmail()
       );
       // console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
       // console.log('Name: ' + profile.getName());
@@ -281,7 +273,7 @@ class App extends Component {
       // this.loadGoogleCalendarClient();
       // this.getCalendarInfo();
 
-      this.onSignIn(googleUser);
+      this.onSignIn(googleUser).then(() => { this.getUserGoogleCalendarID(response.access_token); });
 
       this.closeModal();
       this.setState({
@@ -300,17 +292,19 @@ class App extends Component {
     }
   }
 
-  onSignIn(googleUser) {
+  async onSignIn(googleUser) {
     console.log("Beginning process of authenticating Google user via token id");
     const id_token = googleUser.getAuthResponse().id_token;
 
     console.log("testing id_token var:  " + id_token);
 
     const xhr = new XMLHttpRequest();
+
     xhr.open("POST", "/api/tokensignin");
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xhr.onload = function() {
-      console.log("Signed in as: " + xhr.responseText);
+    xhr.onload = function () {
+      console.log("Server response: " + xhr.responseText);
+
     };
     xhr.send("idtoken=" + id_token);
   }
@@ -457,7 +451,7 @@ class App extends Component {
       //ternary chain used to update the countdown on all cards
       plan.timeUntil = `${hours === 0 ? "" : `${-hours}:`}${
         -minutes < 10 ? `0${-minutes}:` : `${-minutes}:`
-      }${-seconds < 10 ? "0" : ""}${-seconds}`;
+        }${-seconds < 10 ? "0" : ""}${-seconds}`;
     });
 
     //This loop controls the progress bar
@@ -535,40 +529,18 @@ class App extends Component {
     this.handlePlans();
   }
 
-  // Calendar related functions
+  // Google Calendar API related functions
 
-  // appendPre(message) {
-  //     var pre = document.getElementById('content');
-  //     var textContent = document.createTextNode(message + '\n');
-  //     pre.appendChild(textContent);
-  // }
+  getUserGoogleCalendarID(googleAccessToken) {
+    console.log("Function called to get list of signed in Google User's calendar list");
+    console.log("testing getGoogleAccessToken");
+    console.log(googleAccessToken);
 
-  // listUpcomingEvents() {
-  //     window.gapi.client.calendar.events.list({
-  //         'calendarId': 'primary',
-  //         'timeMin': (new Date()).toISOString(),
-  //         'showDeleted': false,
-  //         'singleEvents': true,
-  //         'maxResults': 10,
-  //         'orderBy': 'startTime'
-  //     }).then(function (response) {
-  //         var events = response.result.items;
-  //         this.appendPre('Upcoming events:');
+    API.getCalendarInfo(googleAccessToken).then(response => {
+      console.log(response);
+    });
 
-  //         if (events.length > 0) {
-  //             for (let i = 0; i < events.length; i++) {
-  //                 var event = events[i];
-  //                 var when = event.start.dateTime;
-  //                 if (!when) {
-  //                     when = event.start.date;
-  //                 }
-  //                 this.appendPre(event.summary + ' (' + when + ')')
-  //             }
-  //         } else {
-  //             this.appendPre('No upcoming events found.');
-  //         }
-  //     });
-  // }
+  }
 
   render() {
     const date = this.state.dateFormatted;
@@ -578,10 +550,10 @@ class App extends Component {
         <PlanForm id={this.state.userId} newPlanSubmit={this.newPlanSubmit} />
       </div>
     ) : (
-      <div>
-        <p>You are signed out</p>
-      </div>
-    );
+        <div>
+          <p>You are signed out</p>
+        </div>
+      );
 
     const isLoading = this.state.loading;
 
@@ -604,10 +576,10 @@ class App extends Component {
         </CardContainer>
       </div>
     ) : (
-      <div>
-        <p>Please log in and create plans</p>
-      </div>
-    );
+        <div>
+          <p>Please log in and create plans</p>
+        </div>
+      );
 
     return (
       <div className="App">
@@ -664,8 +636,8 @@ class App extends Component {
 
             recoverPasswordSuccessLabel: this.state.recoverPasswordSuccess
               ? {
-                  label: "New password has been sent to your mailbox!"
-                }
+                label: "New password has been sent to your mailbox!"
+              }
               : null,
             recoverPasswordAnchor: {
               label: "Forgot your password?"
