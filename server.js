@@ -22,8 +22,6 @@ mongoose.connect(
 );
 mongoose.set('useCreateIndex', true);
 
-
-
 app.get('*', (request, response) => {
 	response.sendFile(path.join(__dirname, 'client/build', 'index.html'));
 });
