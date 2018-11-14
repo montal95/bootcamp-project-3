@@ -23,12 +23,7 @@ router.get("/api/plans/:id", function (req, res) {
 router.post("/api/user", function (req, res) {
   console.log("\ntesting req.body");
   console.log(req.body);
-  // console.log("\ntesting req.body.accounts");
-  // console.log(req.body.accounts);
 
-  // const newUser = { firstname: req.body.firstname, lastname: req.body.lastname, email: req.body.email };
-  // console.log("\ntesting newUser");
-  // console.log(newUser);
   console.log("==================================================");
 
   db.User.create(req.body, function (err, response) {
@@ -38,56 +33,9 @@ router.post("/api/user", function (req, res) {
       return res.json(err);
     }
     else {
-      console.log("\nelse condition to findOneAndUpdate");
+      console.log("\n No error, send json response");
 
       return res.json(response);
-
-      // console.log("\ntesting response._id ");
-      // console.log(response._id);
-
-      // console.log("\ntesting newUser.email");
-      // console.log(newUser.email);
-
-      // const accounts = req.body.accounts;
-      // console.log("\ntesting accounts");
-      // console.log(accounts);
-
-      // db.Account.create(accounts)
-      //   .then(function (dbAccount) {
-      //       console.log("\ntesting dbAccount");
-      //       console.log(dbAccount);
-      //       // If a Note was created successfully, find one Article with an `_id` equal to `req.params.id`. Update the Article to be associated with the new Note
-      //       // { new: true } tells the query that we want it to return the updated User -- it returns the original by default
-      //       // Since our mongoose query returns a promise, we can chain another `.then` which receives the result of the query
-      //       return db.User.findOneAndUpdate({ _id: response._id }, { $push: { "accounts": dbAccount } }, { new: true });
-      //   })
-      //   .then(function (dbUser) {
-      //       // If we were able to successfully update an Article, send it back to the client
-      //       console.log("\n\ntesting dbUser");
-      //       console.log(dbUser);
-      //       res.json(dbUser);
-      //   })
-      //   .catch(function (err) {
-      //       // If an error occurred, send it to the client
-      //       console.log("\n\nWARNING - error found");
-      //       console.log(err);
-      //       res.json(err);
-      //   });
-
-      // db.User.findOneAndUpdate(
-      //   { _id: response._id },
-      //   { $push: { "accounts": { type: accounts.type, username: accounts.username, password: accounts.password } } },
-      //   { new: true })
-      //   .then(function (dbUser) {
-      //     res.send("User successuflly added to db");
-
-      //   })
-      //   .catch(function (err) {
-      //     // If an error occurred, send it to the client
-      //     console.log("\n\n WARNING: error found");
-      //     console.log(err);
-      //     res.json(err);
-      //   });
     }
   });
 });
@@ -95,7 +43,7 @@ router.post("/api/user", function (req, res) {
 //route used to login - return as a boolean
 router.post("/login", function (req, res) {
   console.log("login route hit");
-  console.log("Line 101 of routes/user.js - testing req.body");
+  console.log("Line 46 of routes/user.js - testing req.body");
   console.log(req.body);
   console.log("=========");
 
@@ -149,16 +97,16 @@ router.delete("/api/user/:id", function(req, res) {
 });
 
 router.post("/api/tokensignin", function (req, res) {
-  console.log("====================================")
+  console.log("\n\n====================================")
   console.log("token sign in backend route hit");
   console.log("====================================\n")
   console.log(req.body);
 
   const { idtoken } = req.body;
-  console.log("testing process.env.REACT_APP_GOOGLE_CLIENT_ID");
+  console.log("\ntesting process.env.REACT_APP_GOOGLE_CLIENT_ID");
   console.log(process.env.REACT_APP_GOOGLE_CLIENT_ID);
 
-  console.log("testing idtoken");
+  console.log("\ntesting idtoken");
   console.log(idtoken);
 
   verify(idtoken).catch(console.error);
@@ -225,28 +173,13 @@ router.post("/api/tokensignin", function (req, res) {
                 id: userid,
                 token: token
               }
-            }).save().then(function (err, response) { return json(response) });
+            }).save().then(function (response) { 
+              console.log(response);
+              return res.json(response) });
 
-            // const googleUser = {
-            //   email: email,
-            //   firstname: firstName,
-            //   lastname: lastName,
-            //   google: {
-            //     id: userid,
-            //     token: token
-            //   }
-            // }
-            // console.log("\ntesting googleUser");
-            // console.log(googleUser);
-
-            // db.User.create(googleUser, function (err, response) {
-            //   if (err) {
-            //     return res.json(err);
-            //   }
-            //   return res.json(response);
-            // });
           } else {
             console.log("Google User already exists in db, no need to create new entry");
+            return res.status(200).send('Google Token verified, sign-in complete');
           }
         })
         .catch(function (err) {
@@ -254,6 +187,10 @@ router.post("/api/tokensignin", function (req, res) {
           res.json(err);
         });;
 
+    }
+    else {
+      console.log("Received no ticket from Google when verifying token");
+      res.status(400).send('Bad Request, Invalid token from Google User sign-in');
     }
 
 
