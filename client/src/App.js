@@ -235,8 +235,6 @@ class App extends Component {
     console.log("console logging out the response");
     // console.log(JSON.stringify(response));
     console.log(response);
-    console.log("testing access_token");
-    console.log(response.access_token);
 
     if (method === "google") {
       console.log(

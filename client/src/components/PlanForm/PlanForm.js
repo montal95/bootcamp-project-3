@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import "./PlanForm.css";
 import API from "../../api/user";
-import Moment from "moment";
-import { element } from "prop-types";
 
 class PlanForm extends Component {
   constructor(props) {
