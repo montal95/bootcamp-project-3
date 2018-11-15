@@ -23,8 +23,7 @@ const userSchema = new Schema({
   ],
   local: {
     username: {
-      type: String,
-      unique: true
+      type: String
     },
     password: {
       type: String
@@ -32,8 +31,7 @@ const userSchema = new Schema({
   },
   google: {
     id: {
-      type: String,
-      unique: true
+      type: String
     },
     token: {
       type: String

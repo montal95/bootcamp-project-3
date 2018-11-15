@@ -4,10 +4,26 @@ const router = express.Router();
 const db = require("../models");
 const client = new OAuth2Client(process.env.REACT_APP_GOOGLE_CLIENT_ID);
 
-//route used to retrieve user information with necessary fields only
+//route used to retrieve user information with necessary fields only - Local user
 router.get("/api/plans/:id", function (req, res) {
   db.User.findOne({
     'local.username': req.params.id
+  })
+    .populate("plan")
+    .then(function (response) {
+      console.log("testing response after populate user with plans");
+      console.log(response);
+      return res.json(response);
+    })
+    .catch(function (err) {
+      res.json(err);
+    });
+});
+
+//route used to retrieve user information with necessary fields only - Google User
+router.get("/api/plans/google/:id", function (req, res) {
+  db.User.findOne({
+    'email': req.params.id
   })
     .populate("plan")
     .then(function (response) {
@@ -20,7 +36,8 @@ router.get("/api/plans/:id", function (req, res) {
 });
 
 //route used to create a user
-router.post("/api/user", function (req, res) {
+router.post("/api/user/new", function (req, res) {
+  console.log("router post to /api/user");
   console.log("\ntesting req.body");
   console.log(req.body);
 
@@ -29,6 +46,8 @@ router.post("/api/user", function (req, res) {
   db.User.create(req.body, function (err, response) {
     console.log("\ntesting response after attemping to create new user in User db");
     console.log(response);
+    console.log("testing err");
+    console.log(err);
     if (err) {
       return res.json(err);
     }
@@ -53,19 +72,26 @@ router.post("/login", function (req, res) {
       console.log(err);
       return res.json(err);
     }
+
+    console.log("testing response after logging in");
+    console.log(response);
+
     response.comparePassword(req.body.password, function (error, user) {
       if (error) {
         console.log(error);
         return res.json(error);
       }
+      console.log("testing user var after comparePassword");
       console.log(user);
+      console.log("============================");
       return res.json(user);
     });
   });
 });
 
 //used to post a plan and assign its _id to the user
-router.post("/api/user/:id", function (req, res) {
+router.post("/api/plan/:id", function (req, res) {
+  console.log("backend server route to update user's plan array");
   db.Plan.create(req.body).then(function (dbPlan) {
     // console.log(dbNote);
     console.log(req.body);
@@ -86,8 +112,8 @@ router.post("/api/user/:id", function (req, res) {
 });
 
 //route used to delete user
-router.delete("/api/user/:id", function(req, res) {
-  db.User.remove({ _id: req.params.id }, function(err, response) {
+router.delete("/api/user/:id", function (req, res) {
+  db.User.remove({ _id: req.params.id }, function (err, response) {
     if (err) {
       console.log(err);
     } else {
@@ -173,9 +199,11 @@ router.post("/api/tokensignin", function (req, res) {
                 id: userid,
                 token: token
               }
-            }).save().then(function (response) { 
+            }).save().then(function (response) {
+              console.log("Response after creating Google User in db");
               console.log(response);
-              return res.json(response) });
+              return res.json(response)
+            });
 
           } else {
             console.log("Google User already exists in db, no need to create new entry");
@@ -197,18 +225,18 @@ router.post("/api/tokensignin", function (req, res) {
   }
 });
 
-router.get("/api/googleclientid", function (req, res) { 
+router.get("/api/googleclientid", function (req, res) {
   return res.json(process.env.REACT_APP_GOOGLE_CLIENT_ID);
- });
+});
 
 
 //route used to delete plan from planDB
-router.delete("/api/plans/:id", function(req, res) {
+router.delete("/api/plans/:id", function (req, res) {
   db.Plan.remove(
     {
       _id: req.params.id
     },
-    function(err, response) {
+    function (err, response) {
       if (err) {
         console.log(err);
       } else {

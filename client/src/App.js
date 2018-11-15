@@ -24,13 +24,13 @@ class App extends Component {
       username: "",
       firstName: "",
       lastName: "",
-      password: "",
       email: "",
       profilePicURL: "",
       showModal: false,
       loggedIn: null,
       loading: false,
       error: null,
+      errorMsg: "Couldn't sign up, please try again.",
       initialTab: null,
       recoverPasswordSuccess: null,
       plans: [],
@@ -58,11 +58,6 @@ class App extends Component {
     console.log("testing state");
     console.log(this.state);
     console.log("we are in:  " + process.env.NODE_ENV + " mode");
-    console.log("testing process.env:  ");
-    console.log(process.env);
-
-    console.log("\ntesting googleConfig");
-    console.log(googleConfig);
 
     this.interval = setInterval(this.clockTick, 1000);
   }
@@ -101,8 +96,7 @@ class App extends Component {
           console.log(response);
           this.onLoginSuccess("form", response);
           this.setState({
-            username: login,
-            password: password
+            username: login
           });
           console.log(
             `State after login success function: \n ${JSON.stringify(
@@ -138,6 +132,7 @@ class App extends Component {
       loggedIn: null,
       loading: false,
       error: null,
+      errorMsg: "Couldn't sign up, please try again.",
       initialTab: null,
       recoverPasswordSuccess: null,
       plans: [],
@@ -166,7 +161,8 @@ class App extends Component {
 
     if (!login || !email || !password) {
       this.setState({
-        error: true
+        error: true,
+        errorMsg: "One or more fields is empty."
       });
     } else {
       const newUserData = {
@@ -184,15 +180,35 @@ class App extends Component {
       console.log("====================");
 
       API.newUser(newUserData).then(response => {
+        console.log("Testing response after backend tries to create new user");
         console.log(response);
-        this.onLoginSuccess("form");
-        this.setState({
-          username: login,
-          firstName: firstName,
-          lastName: lastName,
-          email: email,
-          password: password
-        });
+
+        if (response.data.errmsg) {
+          console.log(response.data.errmsg);
+
+          const regexDupeEmailExpr = /\b(E11000)\b.*?\bemail_1 dup key\b/si;
+
+          if (regexDupeEmailExpr.test(response.data.errmsg)) {
+            console.log("User attempting to register with an email already existing in the database. ");
+            this.setState({
+              error: true,
+              errorMsg: "ERROR: The email you have enter is already registered. Please login with the account registered with this email address."
+            });
+          }
+          this.setState({
+            error: true,
+          });
+        }
+
+        else {
+          this.onLoginSuccess("form");
+          this.setState({
+            username: login,
+            firstName: firstName,
+            lastName: lastName,
+            email: email
+          });
+        }
       });
     }
   }
@@ -235,13 +251,16 @@ class App extends Component {
     console.log("console logging out the response");
     // console.log(JSON.stringify(response));
     console.log(response);
-    console.log("testing access_token");
-    console.log(response.access_token);
+    this.setState({
+      loggedIn: method
+    });
 
     if (method === "google") {
       console.log(
         "sign in with google is a success, attempting to get basic profile data now"
       );
+      console.log("testing access_token");
+      console.log(response.access_token);
       const googleUser = window.gapi.auth2.getAuthInstance().currentUser.get();
       const profile = googleUser.getBasicProfile();
 
@@ -273,16 +292,21 @@ class App extends Component {
       // this.loadGoogleCalendarClient();
       // this.getCalendarInfo();
 
-      this.onSignIn(googleUser).then(() => { this.getUserGoogleCalendarID(response.access_token); });
+      this.onSignIn(googleUser).then(() => { 
+        this.getPlans(profile.getEmail());
+        this.getUserGoogleCalendarID(response.access_token);
+
+        this.setState({
+          username: profile.getName(),
+          email: profile.getEmail(),
+          firstName: profile.getGivenName(),
+          lastName: profile.getFamilyName(),
+          profilePicURL: profile.getImageUrl(),
+          loading: false
+        });
+       });
 
       this.closeModal();
-      this.setState({
-        username: profile.getName(),
-        email: profile.getEmail(),
-        profilePicURL: profile.getImageUrl(),
-        loggedIn: method,
-        loading: false
-      });
     } else {
       this.closeModal();
       this.setState({
@@ -303,7 +327,19 @@ class App extends Component {
     xhr.open("POST", "/api/tokensignin");
     xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     xhr.onload = function () {
-      console.log("Server response: " + xhr.responseText);
+      console.log("Server response:");
+      console.log(xhr.responseText);
+      console.log("=================");
+      // console.log(JSON.parse(xhr.responseText));
+      // const response = JSON.parse(xhr.responseText);
+      // console.log("ID:  " + response._id);
+
+      // console.log("typeof xhr.responseText:  " + typeof xhr.responseText);
+      // if (xhr.responseText !== null && typeof xhr.responseText === 'object')
+      // {
+      //   console.log("testing xhr.response.Text._id:   " + xhr.response.Text._id);
+
+      // }
 
     };
     xhr.send("idtoken=" + id_token);
@@ -393,18 +429,56 @@ class App extends Component {
   getPlans(username) {
     console.log(`${username} for get plans api`);
     //runs API GET
-    API.getInfo(username).then(response => {
-      //inserts user info into state
-      this.setState({
-        userId: response.data._id,
-        plans: response.data.plan,
-        email: response.data.email,
-        firstName: response.data.firstname,
-        lastName: response.data.lastname,
-        password: "",
-        plansLoaded: true
+
+    if (this.state.loggedIn === 'form')
+    {
+      console.log("getPlans - forms");
+      API.getInfoLocal(username).then(response => {
+        console.log("getinfoLocal response");
+        console.log(response);
+
+        console.log("================================");
+        console.log("getinfoLocal response.data");
+        console.log(response.data);
+
+        console.log("================================");
+        console.log("getinfoLocal response.request");
+        console.log(response.request);
+        console.log("getinfoLocal response.request.response");
+        console.log(response.request.response);
+
+        console.log("testing plans");
+        console.log(response.data.plan);
+
+        //inserts user info into state
+        this.setState({
+          userId: response.data._id,
+          plans: response.data.plan,
+          email: response.data.email,
+          firstName: response.data.firstname,
+          lastName: response.data.lastname,
+          plansLoaded: true
+        });
       });
-    });
+
+    } else if (this.state.loggedIn === 'google')
+    {
+      console.log("getPlans - Google sign-in");
+      API.getInfoGoogle(username).then(response => {
+        console.log("getinfoGoogle response");
+        console.log(response.data);
+
+        //inserts user info into state
+        this.setState({
+          userId: response.data._id,
+          plans: response.data.plan,
+          email: response.data.email,
+          firstName: response.data.firstname,
+          lastName: response.data.lastname,
+          plansLoaded: true
+        });
+      });
+    }
   }
 
   handlePlans() {
@@ -592,24 +666,6 @@ class App extends Component {
           logoff={() => this.onLogOut()}
           register={() => this.openModal("register")}
         />
-        {/* <header className="App-header">
-                    <img src={logo} className="App-logo" alt="logo" />
-                    <p>
-                        Edit <code>src/App.js</code> and save to reload.
-                    </p>
-                    <a
-                        className="App-link"
-                        href="https://reactjs.org"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        Learn React
-                    </a>
-                    {loggedIn}
-                    <p>Google Calendar API Quickstart</p>
-                    <div id="content">
-                    </div>
-                </header> */}
         <Calendar />
         <ReactModalLogin
           visible={this.state.showModal}
@@ -625,7 +681,7 @@ class App extends Component {
               "Couldn't sign in, please make sure you typed in your username and password correctly."
           }}
           registerError={{
-            label: "Couldn't sign up, please try again."
+            label: this.state.errorMsg
           }}
           startLoading={this.startLoading.bind(this)}
           finishLoading={this.finishLoading.bind(this)}

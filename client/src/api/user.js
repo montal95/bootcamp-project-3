@@ -9,12 +9,19 @@ const API = {
 
     return axios.post("/login", newUser);
   },
-  getInfo: function (id) {
-    console.log("get user info route");
+  getInfoLocal: function (username) {
+    console.log("get user info w/ plans route");
     console.log("Getting info for logged in user: ");
-    console.log(id);
+    console.log(username);
     console.log("=========================");
-    return axios.get(`/api/plans/${id}`);
+    return axios.get(`/api/plans/${username}`);
+  },
+  getInfoGoogle: function (email) {
+    console.log("get user info w plans route");
+    console.log("Getting info for logged in user: ");
+    console.log(email);
+    console.log("=========================");
+    return axios.get(`/api/plans/google/${email}`);
   },
   newUser: function (newUser) {
     console.log("newUser post route");
@@ -22,10 +29,10 @@ const API = {
     console.log(newUser);
     console.log("===============================");
 
-    return axios.post("/api/user", newUser);
+    return axios.post("/api/user/new", newUser);
   },
   newPlan: function (id, newPlan) {
-    return axios.post(`/api/user/${id}`, newPlan);
+    return axios.post(`/api/plan/${id}`, newPlan);
   },
   getCalendarInfo: function (googleAccessToken) {
     console.log("getCalendarinfo backend route");
