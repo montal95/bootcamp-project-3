@@ -251,12 +251,9 @@ class App extends Component {
     console.log("console logging out the response");
     // console.log(JSON.stringify(response));
     console.log(response);
-<<<<<<< HEAD
-=======
     this.setState({
       loggedIn: method
     });
->>>>>>> f713aab0074ea2b68f8f744353dd2a7681b615bb
 
     if (method === "google") {
       console.log(
