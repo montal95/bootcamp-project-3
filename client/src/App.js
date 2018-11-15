@@ -203,6 +203,7 @@ class App extends Component {
         else {
           this.onLoginSuccess("form");
           this.setState({
+            userId: response.data._id,
             username: login,
             firstName: firstName,
             lastName: lastName,
@@ -292,7 +293,7 @@ class App extends Component {
       // this.loadGoogleCalendarClient();
       // this.getCalendarInfo();
 
-      this.onSignIn(googleUser).then(() => { 
+      this.onSignIn(googleUser).then(() => {
         this.getPlans(profile.getEmail());
         this.getUserGoogleCalendarID(response.access_token);
 
@@ -304,7 +305,7 @@ class App extends Component {
           profilePicURL: profile.getImageUrl(),
           loading: false
         });
-       });
+      });
 
       this.closeModal();
     } else {
@@ -430,8 +431,7 @@ class App extends Component {
     console.log(`${username} for get plans api`);
     //runs API GET
 
-    if (this.state.loggedIn === 'form')
-    {
+    if (this.state.loggedIn === 'form') {
       console.log("getPlans - forms");
       API.getInfoLocal(username).then(response => {
         console.log("getinfoLocal response");
@@ -461,8 +461,7 @@ class App extends Component {
         });
       });
 
-    } else if (this.state.loggedIn === 'google')
-    {
+    } else if (this.state.loggedIn === 'google') {
       console.log("getPlans - Google sign-in");
       API.getInfoGoogle(username).then(response => {
         console.log("getinfoGoogle response");
@@ -619,7 +618,7 @@ class App extends Component {
   render() {
     const date = this.state.dateFormatted;
 
-    const loggedIn = this.state.loggedIn ? (
+    const loggedIn = this.state.userId !== "" ? (
       <div>
         <PlanForm id={this.state.userId} newPlanSubmit={this.newPlanSubmit} />
       </div>
