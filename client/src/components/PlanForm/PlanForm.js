@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "./PlanForm.css";
 import API from "../../api/user";
+import Moment from "moment";
 
 class PlanForm extends Component {
   constructor(props) {
@@ -38,13 +39,13 @@ class PlanForm extends Component {
     let sendPlan = {
       'description':`${description}`,
       'location' : `${location}`,
-      'startTime' : `${startTime}`,
-      'endTime' : `${endTime}`
+      'startTime' : `${Moment.utc(startTime)}`,
+      'endTime' : `${Moment.utc(endTime)}`
   }
     console.log(`User id: ${userId}`)
     console.log(`Plan info:`);
     console.log("================");
-    console.log(newPlan);
+    console.log(sendPlan);
     console.log("Making API post");
     API.newPlan(userId, sendPlan);
     this.props.newPlanSubmit(newPlan);
