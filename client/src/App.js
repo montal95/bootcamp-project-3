@@ -8,9 +8,11 @@ import PlanForm from "./components/PlanForm";
 import Moment from "moment";
 import ReactModalLogin from "react-modal-login";
 import { googleConfig } from "./social-config";
-import Calendar from "./components/Calendar/Calendar";
+// import Calendar from "./components/Calendar/Calendar";
+import FullCalendar from 'fullcalendar-reactwrapper';
 import API from "./api/user";
 import "./App.css";
+import './fullcalendar.min.css';
 
 class App extends Component {
   constructor(props) {
@@ -34,6 +36,7 @@ class App extends Component {
       initialTab: null,
       recoverPasswordSuccess: null,
       plans: [],
+      events: [],
       plansLoaded: false
     };
 
@@ -292,7 +295,7 @@ class App extends Component {
       // this.loadGoogleCalendarClient();
       // this.getCalendarInfo();
 
-      this.onSignIn(googleUser).then(() => { 
+      this.onSignIn(googleUser).then(() => {
         this.getPlans(profile.getEmail());
         this.getUserGoogleCalendarID(response.access_token);
 
@@ -304,7 +307,7 @@ class App extends Component {
           profilePicURL: profile.getImageUrl(),
           loading: false
         });
-       });
+      });
 
       this.closeModal();
     } else {
@@ -430,8 +433,7 @@ class App extends Component {
     console.log(`${username} for get plans api`);
     //runs API GET
 
-    if (this.state.loggedIn === 'form')
-    {
+    if (this.state.loggedIn === 'form') {
       console.log("getPlans - forms");
       API.getInfoLocal(username).then(response => {
         console.log("getinfoLocal response");
@@ -461,8 +463,7 @@ class App extends Component {
         });
       });
 
-    } else if (this.state.loggedIn === 'google')
-    {
+    } else if (this.state.loggedIn === 'google') {
       console.log("getPlans - Google sign-in");
       API.getInfoGoogle(username).then(response => {
         console.log("getinfoGoogle response");
@@ -666,7 +667,19 @@ class App extends Component {
           logoff={() => this.onLogOut()}
           register={() => this.openModal("register")}
         />
-        <Calendar />
+
+        <FullCalendar
+          id="inHabit-Calendar"
+          header={{
+            left: 'prev,next today myCustomButton',
+            center: 'title',
+            right: 'month,basicWeek,basicDay'
+          }}
+          height={720}
+          navLinks={true} // can click day/week names to navigate views
+          editable={true}
+          eventLimit={true} // allow "more" link when too many events
+          events={this.state.events} />
         <ReactModalLogin
           visible={this.state.showModal}
           onCloseModal={this.closeModal.bind(this)}

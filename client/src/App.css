@@ -33,7 +33,7 @@
 
 /* FONT IMPORTS */
 
-@import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,700);
+/* @import url(https://fonts.googleapis.com/css?family=Open+Sans:300,400,700);
 @import url(https://fonts.googleapis.com/icon?family=Material+Icons);
 
 .icon {
@@ -56,7 +56,7 @@
 
 
 /* Calendar */
-
+/* 
 .calendar {
   display: block;
   position: relative;
@@ -171,4 +171,4 @@
   flex-grow: 0;
   flex-basis: calc(100% / 7);
   width: calc(100% / 7);
-}
+} */ 
