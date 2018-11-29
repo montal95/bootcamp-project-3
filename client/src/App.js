@@ -486,33 +486,39 @@ class App extends Component {
     let userPlans = this.state.plans.sort((a, b) =>
       a.startTime > b.startTime ? 1 : -1
     );
+    console.log(`plans after sort: ${JSON.stringify(userPlans)}`);
 
     //creates countdown effect on each card
     userPlans.forEach((plan, index) => {
-      let now = Moment();
+      
+      let now = Moment.utc().local();
       let startTime = Moment(plan.startTime);
+      let endTime = Moment(plan.endTime).local();
       let displayTime = startTime;
       let minutes = now.diff(displayTime, "minutes") % 60;
       let seconds = now.diff(displayTime, "seconds") % 60;
       let hours = now.diff(displayTime, "hours") % 24;
       let days = now.diff(displayTime, "days");
 
+      console.log(`Now: ${now}`);
+      console.log(`End Time: ${endTime}`);
+
       //removes plan from array if the plan's time frame isn't within 24 hours
-      if (days < 0 || days > 0) {
+      if (now.isAfter(endTime)) {
         userPlans.splice(index, 1);
       }
       //changes the 'display time' with the end time to start the countdown until this plan ends
-      if (seconds > 0 || minutes > 0 || hours > 0) {
-        displayTime = plan.endTime;
+      if (now.isAfter(startTime)) {
+        displayTime = endTime;
         minutes = now.diff(displayTime, "minutes") % 60;
         seconds = now.diff(displayTime, "seconds") % 60;
         hours = now.diff(displayTime, "hours") % 24;
         days = now.diff(displayTime, "days");
       }
       // removes plan from array if it's past the end time
-      if (now.diff(plan.endTime) > 0) {
-        userPlans.splice(index, 1);
-      }
+      // if (now.diff(plan.endTime) > 0) {
+      //   userPlans.splice(index, 1);
+      // }
 
       //sets the display time variable as a property
       plan.displayTime = displayTime;
@@ -527,6 +533,9 @@ class App extends Component {
         -minutes < 10 ? `0${-minutes}:` : `${-minutes}:`
         }${-seconds < 10 ? "0" : ""}${-seconds}`;
     });
+
+    console.log(`Plan after handling: ${JSON.stringify(userPlans)}`);
+    
 
     //This loop controls the progress bar
     userPlans.forEach(plan => {
@@ -590,7 +599,7 @@ class App extends Component {
     //sets current userPlan to overwrite previous array
     this.setState({
       plans: userPlans
-    });
+    }, ()=>{console.log(`state set ${JSON.stringify(this.state.plans)}`)})
   }
 
   //plan used to update the state from the submit in the form
