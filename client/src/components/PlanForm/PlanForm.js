@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "./PlanForm.css";
 import API from "../../api/user";
-import Moment from "moment";
+import moment from "moment-timezone";
 
 class PlanForm extends Component {
   constructor(props) {
@@ -36,11 +36,14 @@ class PlanForm extends Component {
         'endTime' : `${endTime}`
     }
 
+    let startTime2 = moment(startTime).tz('America/Chicago').toISOString();
+    let endTime2 = moment(endTime).tz('America/Chicago').toISOString();
+
     let sendPlan = {
       'description':`${description}`,
       'location' : `${location}`,
-      'startTime' : `${Moment.utc(startTime)}`,
-      'endTime' : `${Moment.utc(endTime)}`
+      'startTime' : `${startTime2}`,
+      'endTime' : `${endTime2}`
   }
     console.log(`User id: ${userId}`)
     console.log(`Plan info:`);
