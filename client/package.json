@@ -7,6 +7,7 @@
     "axios": "^0.18.0",
     "fullcalendar-reactwrapper": "^1.0.7",
     "moment": "^2.22.2",
+    "moment-timezone": "^0.5.23",
     "react": "^16.6.0",
     "react-dom": "^16.6.0",
     "react-google-login": "^3.2.1",
