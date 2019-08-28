@@ -14,7 +14,7 @@
   },
   "keywords": [],
   "author": "",
-  "homepage":"https://inhabit-planner-app.herokuapp.com",
+  "homepage": "https://inhabit-planner-app.herokuapp.com",
   "license": "ISC",
   "devDependencies": {
     "concurrently": "^4.0.1",
