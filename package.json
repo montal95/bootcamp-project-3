@@ -28,7 +28,7 @@
     "express": "^4.16.4",
     "google-auth-library": "^2.0.1",
     "if-env": "^1.0.4",
-    "mongoose": "^5.3.10",
+    "mongoose": "^5.7.5",
     "path": "^0.12.7",
     "reactstrap": "^6.5.0"
   }
